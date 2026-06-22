@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Management - Full Feature</title>
+    <title>Money Management - Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>body { background-color: #0b1120; color: #f8fafc; font-family: sans-serif; }</style>
 </head>
 <body class="min-h-screen flex">
@@ -15,45 +16,68 @@
             <a href="#" class="block bg-slate-800 px-4 py-2 rounded-lg text-sm">Dashboard</a>
             <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Rekening</a>
             <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Transaksi</a>
-            <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Aset & Investasi</a>
-            <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Laporan</a>
         </nav>
     </div>
 
     <div class="flex-1 p-8">
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold">Halo, Alvian!</h2>
-            <p class="text-slate-400">Kelola keuangan, rekening, dan aset investasi kamu di satu tempat.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <button onclick="bukaModal('transaksi')" class="bg-indigo-600 p-4 rounded-xl text-left hover:bg-indigo-700 transition">
-                <span class="block font-bold">+ Input Transaksi</span>
-                <span class="text-xs text-indigo-200">Catat pemasukan/pengeluaran</span>
-            </button>
-            <button onclick="bukaModal('rekening')" class="bg-emerald-600 p-4 rounded-xl text-left hover:bg-emerald-700 transition">
-                <span class="block font-bold">+ Tambah Rekening</span>
-                <span class="text-xs text-emerald-200">BCA, Dana, OVO, dll</span>
-            </button>
-            <button onclick="bukaModal('aset')" class="bg-amber-600 p-4 rounded-xl text-left hover:bg-amber-700 transition">
-                <span class="block font-bold">+ Tambah Aset</span>
-                <span class="text-xs text-amber-200">Bitcoin, Ruko, dll</span>
-            </button>
-        </div>
-
-        <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-800">
-            <h3 class="font-bold mb-4">Ringkasan Utama</h3>
-            <div id="konten-utama" class="text-slate-400 text-sm italic">
-                Data akan dimuat dari Supabase...
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-2xl font-bold">Dashboard</h2>
+                <p class="text-slate-400 text-sm">Kelola keuangan multi-mata uang.</p>
             </div>
+            <button onclick="document.getElementById('modal-transaksi').classList.remove('hidden')" class="bg-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-700">
+                + Input Transaksi
+            </button>
+        </div>
+    </div>
+
+    <div id="modal-transaksi" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-700 w-full max-w-md">
+            <h3 class="font-bold text-lg mb-4">Input Transaksi</h3>
+            <form id="form-transaksi" class="space-y-3">
+                <select id="jenis" class="w-full bg-slate-800 p-2 rounded border border-slate-700">
+                    <option value="pemasukan">Pendapatan (+)</option>
+                    <option value="pengeluaran">Pengeluaran (-)</option>
+                </select>
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="rekening" class="w-full bg-slate-800 p-2 rounded border border-slate-700">
+                        <option value="BCA">BCA</option>
+                        <option value="ABA">ABA BANK</option>
+                        <option value="DANA">DANA</option>
+                    </select>
+                    <select id="mata_uang" class="w-full bg-slate-800 p-2 rounded border border-slate-700">
+                        <option value="IDR">IDR</option>
+                        <option value="USD">USD</option>
+                        <option value="KHR">KHR</option>
+                    </select>
+                </div>
+                <input id="nominal" type="number" placeholder="Nominal" class="w-full bg-slate-800 p-2 rounded border border-slate-700" required>
+                <input id="catatan" type="text" placeholder="Catatan" class="w-full bg-slate-800 p-2 rounded border border-slate-700">
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="document.getElementById('modal-transaksi').classList.add('hidden')" class="flex-1 bg-slate-700 py-2 rounded">Batal</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 py-2 rounded font-bold">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        function bukaModal(jenis) {
-            alert("Fitur " + jenis + " akan segera diaktifkan. Pastikan tabel di Supabase sudah dibuat.");
-            // Di sini nanti kita tambahkan fungsi untuk menampilkan form input
-        }
+        // Ganti dengan URL dan KEY Supabase kamu!
+        const _supabase = supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_KEY');
+
+        document.getElementById('form-transaksi').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const { error } = await _supabase.from('transaksi').insert([{
+                jenis: document.getElementById('jenis').value,
+                rekening: document.getElementById('rekening').value,
+                mata_uang: document.getElementById('mata_uang').value,
+                nominal: document.getElementById('nominal').value,
+                catatan: document.getElementById('catatan').value
+            }]);
+            
+            if (error) alert("Error: " + error.message);
+            else { alert("Berhasil disimpan!"); location.reload(); }
+        });
     </script>
 </body>
 </html>
