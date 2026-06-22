@@ -3,74 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Management - PostgreSQL Edition</title>
+    <title>Money Management - Full Feature</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        body { background-color: #0b1120; color: #f8fafc; font-family: sans-serif; }
-    </style>
+    <style>body { background-color: #0b1120; color: #f8fafc; font-family: sans-serif; }</style>
 </head>
 <body class="min-h-screen flex">
 
     <div class="w-64 bg-[#0f172a] p-6 border-r border-slate-800 flex flex-col">
-        <div class="flex items-center gap-3 mb-8">
-            <div class="bg-indigo-600 p-2 rounded-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            </div>
-            <div>
-                <h1 class="font-bold text-sm">Money Management</h1>
-                <p class="text-xs text-slate-400">PostgreSQL Edition</p>
-            </div>
-        </div>
-        
-        <nav class="space-y-1 flex-1">
-            <a href="#" class="flex items-center gap-3 bg-slate-800 text-white px-4 py-2.5 rounded-lg text-sm font-medium">Dashboard</a>
-            <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-2.5 rounded-lg text-sm">Rekening</a>
-            <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-2.5 rounded-lg text-sm">+ Transaksi</a>
-            <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-2.5 rounded-lg text-sm">Budget</a>
-            <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-2.5 rounded-lg text-sm">Aset</a>
-            <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white px-4 py-2.5 rounded-lg text-sm">Laporan</a>
+        <h1 class="font-bold text-lg mb-8 text-indigo-400">Money Management</h1>
+        <nav class="space-y-2 flex-1">
+            <a href="#" class="block bg-slate-800 px-4 py-2 rounded-lg text-sm">Dashboard</a>
+            <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Rekening</a>
+            <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Transaksi</a>
+            <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Aset & Investasi</a>
+            <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Laporan</a>
         </nav>
-
-        <div class="mt-auto border-t border-slate-800 pt-4">
-            <p class="text-xs text-slate-500 mb-2">Administrator Alvian</p>
-            <button class="text-slate-400 hover:text-white text-sm flex items-center gap-2">
-                <span>Keluar</span>
-            </button>
-        </div>
     </div>
 
     <div class="flex-1 p-8">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h2 class="text-2xl font-bold">Dashboard</h2>
-                <p class="text-sm text-slate-400">Ringkasan saldo rekening, transaksi bulanan, dan kategori teratas.</p>
-            </div>
-            <button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-                + Input Transaksi
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold">Halo, Alvian!</h2>
+            <p class="text-slate-400">Kelola keuangan, rekening, dan aset investasi kamu di satu tempat.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <button onclick="bukaModal('transaksi')" class="bg-indigo-600 p-4 rounded-xl text-left hover:bg-indigo-700 transition">
+                <span class="block font-bold">+ Input Transaksi</span>
+                <span class="text-xs text-indigo-200">Catat pemasukan/pengeluaran</span>
+            </button>
+            <button onclick="bukaModal('rekening')" class="bg-emerald-600 p-4 rounded-xl text-left hover:bg-emerald-700 transition">
+                <span class="block font-bold">+ Tambah Rekening</span>
+                <span class="text-xs text-emerald-200">BCA, Dana, OVO, dll</span>
+            </button>
+            <button onclick="bukaModal('aset')" class="bg-amber-600 p-4 rounded-xl text-left hover:bg-amber-700 transition">
+                <span class="block font-bold">+ Tambah Aset</span>
+                <span class="text-xs text-amber-200">Bitcoin, Ruko, dll</span>
             </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-[#131c35] p-6 rounded-xl border border-slate-800">
-                <h3 class="font-semibold mb-4">Total Bulan Ini</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-400">
-                        <thead><tr class="border-b border-slate-800"><th class="py-2">MATA UANG</th><th class="py-2">JENIS</th><th class="py-2 text-right">TOTAL</th></tr></thead>
-                        <tbody><tr><td class="py-4 text-slate-500" colspan="3" align="center">Belum ada transaksi bulan ini.</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="bg-[#131c35] p-6 rounded-xl border border-slate-800">
-                <h3 class="font-semibold mb-4">Kategori Teratas</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-400">
-                        <thead><tr class="border-b border-slate-800"><th class="py-2">MATA UANG</th><th class="py-2">KATEGORI</th><th class="py-2 text-right">TOTAL</th></tr></thead>
-                        <tbody><tr><td class="py-4 text-slate-500" colspan="3" align="center">Belum ada kategori.</td></tr></tbody>
-                    </table>
-                </div>
+        <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-800">
+            <h3 class="font-bold mb-4">Ringkasan Utama</h3>
+            <div id="konten-utama" class="text-slate-400 text-sm italic">
+                Data akan dimuat dari Supabase...
             </div>
         </div>
     </div>
 
+    <script>
+        function bukaModal(jenis) {
+            alert("Fitur " + jenis + " akan segera diaktifkan. Pastikan tabel di Supabase sudah dibuat.");
+            // Di sini nanti kita tambahkan fungsi untuk menampilkan form input
+        }
+    </script>
 </body>
 </html>
