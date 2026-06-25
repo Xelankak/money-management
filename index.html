@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Web - Keuangan Pribadi</title>
+    <title>Money Management - Full System Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
-        body { background-color: #0b1329; color: #f8fafc; font-family: sans-serif; }
+        body { background-color: #0b1120; color: #f8fafc; font-family: sans-serif; }
+        .card-glow { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; }
     </style>
 </head>
 <body class="min-h-screen flex">
@@ -17,113 +16,73 @@
     <div class="w-64 bg-[#0f172a] p-6 border-r border-slate-800 flex flex-col justify-between">
         <div>
             <div class="flex items-center gap-3 mb-8">
-                <div class="bg-blue-600 text-white font-bold p-2 rounded-lg text-sm">MM</div>
+                <div class="bg-amber-500 p-2 rounded-lg font-bold text-slate-900">MM</div>
                 <div>
-                    <h1 class="font-bold text-sm tracking-wide">Money Web</h1>
-                    <p class="text-xs text-slate-400">Pencatat Keuangan</p>
+                    <h1 class="font-bold text-sm text-amber-500">Money Management</h1>
+                    <p class="text-xs text-slate-400">Fresh V1.0.3</p>
                 </div>
             </div>
-            
             <nav class="space-y-2">
-                <a href="#" class="flex items-center gap-3 bg-blue-600/20 text-blue-400 px-4 py-2.5 rounded-xl text-sm font-medium">
-                    Dashboard
-                </a>
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                    Transaksi
-                </a>
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:bg-slate-800 hover:text-white px-4 py-2.5 rounded-xl text-sm font-medium transition">
-                    Laporan
-                </a>
+                <a href="#" class="block bg-amber-500/10 text-amber-500 px-4 py-2.5 rounded-lg text-sm font-medium border border-amber-500/20">Dashboard</a>
+                <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Rekening</a>
+                <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Transaksi</a>
+                <a href="#" class="block text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm">Aset</a>
             </nav>
         </div>
-        <div id="status-penyimpanan" class="text-xs text-emerald-400 bg-emerald-950/30 p-3 rounded-lg border border-emerald-800">
-            Koneksi Database Cloud Aktif
+        <div class="text-xs text-slate-500 border-t border-slate-800 pt-4">
+            Login sebagai: <span class="text-slate-300 font-bold block">Alvian Tester</span>
         </div>
     </div>
 
     <div class="flex-1 p-8 overflow-y-auto">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <p class="text-xs text-blue-400 font-semibold tracking-wider uppercase">Catatan Keuangan Pribadi</p>
-                <h2 class="text-2xl font-bold">Dashboard</h2>
+                <span class="text-xs text-amber-500 font-bold tracking-widest uppercase">Catatan Keuangan Pribadi</span>
+                <h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
             </div>
-            <div class="text-sm bg-slate-800 px-4 py-2 rounded-xl border border-slate-700">
-                User: <span class="font-semibold text-blue-400">Tester</span>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">REKENING BCA - IDR</p>
-                <h3 id="saldo-bca" class="text-2xl font-bold text-emerald-400">Rp 0</h3>
-            </div>
-            <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">ABA BANK - USD</p>
-                <h3 id="saldo-aba" class="text-2xl font-bold text-blue-400">$ 0.00</h3>
+            <div class="flex gap-3">
+                <button onclick="bukaModal('rekening')" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg text-sm font-bold transition">+ Rekening</button>
+                <button onclick="bukaModal('transaksi')" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-bold transition">+ Transaksi</button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-800 shadow-xl h-fit">
-                <h4 class="font-bold text-md mb-4 border-b border-slate-800 pb-2">Input Transaksi</h4>
-                
-                <form id="form-transaksi" class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Tanggal</label>
-                        <input type="date" id="tx-tanggal" required class="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Jenis Transaksi</label>
-                        <select id="tx-jenis" class="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                            <option value="Pendapatan">Pendapatan (+)</option>
-                            <option value="Pengeluaran">Pengeluaran (-)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Rekening</label>
-                        <select id="tx-rekening" class="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                            <option value="BCA">BCA (IDR)</option>
-                            <option value="ABA">ABA BANK (USD)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Kategori</label>
-                        <select id="tx-kategori" class="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                            <option value="Gaji">Gaji / Pendapatan</option>
-                            <option value="Makanan">Makanan & Minuman</option>
-                            <option value="Listrik">Listrik & Air</option>
-                            <option value="Internet">Internet / Pulsa</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Nominal</label>
-                        <input type="number" id="tx-nominal" placeholder="Contoh: 50000" required class="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Keterangan</label>
-                        <input type="text" id="tx-keterangan" placeholder="Catatan opsional" class="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm transition">
-                        Simpan Transaksi
-                    </button>
-                </form>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card-glow p-6 rounded-2xl shadow-lg">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Saldo USD</p>
+                <h3 id="total-usd" class="text-2xl font-bold text-amber-500 mt-2">$ 0.00</h3>
+            </div>
+            <div class="card-glow p-6 rounded-2xl shadow-lg">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Saldo IDR</p>
+                <h3 id="total-idr" class="text-2xl font-bold text-amber-500 mt-2">Rp 0</h3>
+            </div>
+            <div class="card-glow p-6 rounded-2xl shadow-lg">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Saldo KHR</p>
+                <h3 id="total-khr" class="text-2xl font-bold text-amber-500 mt-2">0 ៛</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-[#111827] border border-slate-800 p-6 rounded-2xl lg:col-span-1">
+                <h4 class="font-bold text-sm text-slate-300 mb-4 uppercase tracking-wider">Saldo per Rekening</h4>
+                <div id="daftar-rekening" class="space-y-3">
+                    <p class="text-xs text-slate-500 italic">Memuat data akun...</p>
+                </div>
             </div>
 
-            <div class="lg:col-span-2 bg-[#131c35] p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <h4 class="font-bold text-md mb-4 border-b border-slate-800 pb-2">Riwayat Transaksi</h4>
+            <div class="bg-[#111827] border border-slate-800 p-6 rounded-2xl lg:col-span-2">
+                <h4 class="font-bold text-sm text-slate-300 mb-4 uppercase tracking-wider">Transaksi Terbaru</h4>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
+                    <table class="w-full text-sm text-left text-slate-400">
                         <thead>
-                            <tr class="text-slate-400 border-b border-slate-800">
-                                <th class="pb-3 font-semibold">Tanggal</th>
-                                <th class="pb-3 font-semibold">Jenis</th>
-                                <th class="pb-3 font-semibold">Rekening</th>
-                                <th class="pb-3 font-semibold">Kategori</th>
-                                <th class="pb-3 font-semibold">Nominal</th>
-                                <th class="pb-3 font-semibold text-center">Aksi</th>
+                            <tr class="border-b border-slate-800 text-xs uppercase text-slate-500">
+                                <th class="py-3">Tanggal</th>
+                                <th class="py-3">Jenis</th>
+                                <th class="py-3">Rekening</th>
+                                <th class="py-3">Kategori</th>
+                                <th class="py-3 text-right">Nominal</th>
                             </tr>
                         </thead>
-                        <tbody id="tabel-body">
+                        <tbody id="tabel-transaksi">
                             </tbody>
                     </table>
                 </div>
@@ -131,117 +90,154 @@
         </div>
     </div>
 
+    <div id="modal-rekening" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-700 w-full max-w-md shadow-2xl">
+            <h3 class="font-bold text-lg mb-4">Tambah Rekening Baru</h3>
+            <form id="form-rekening" class="space-y-4">
+                <input id="rek-nama" type="text" placeholder="Nama Akun (Contoh: BCA, ABA BANK)" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm" required>
+                <select id="rek-jenis" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm">
+                    <option value="Bank">Bank</option>
+                    <option value="E-Money">E-Money</option>
+                </select>
+                <select id="rek-mata-uang" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm">
+                    <option value="USD">USD ($)</option>
+                    <option value="IDR">IDR (Rp)</option>
+                    <option value="KHR">KHR (Riel)</option>
+                </select>
+                <input id="rek-saldo" type="number" placeholder="Saldo Awal" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm" required>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="tutupModal('rekening')" class="flex-1 bg-slate-700 py-2 rounded-lg text-sm font-medium">Batal</button>
+                    <button type="submit" class="flex-1 bg-emerald-600 py-2 rounded-lg text-sm font-bold">Simpan Akun</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-transaksi" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-[#131c35] p-6 rounded-2xl border border-slate-700 w-full max-w-md shadow-2xl">
+            <h3 class="font-bold text-lg mb-4">Input Transaksi</h3>
+            <form id="form-transaksi" class="space-y-4">
+                <select id="trx-jenis" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm">
+                    <option value="pemasukan">Pemasukan (+)</option>
+                    <option value="pengeluaran">Pengeluaran (-)</option>
+                </select>
+                <select id="trx-rekening" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm" required></select>
+                <input id="trx-kategori" type="text" placeholder="Kategori (Makan, Gaji, dll)" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm" required>
+                <input id="trx-nominal" type="number" placeholder="Nominal Angka" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm" required>
+                <input id="trx-catatan" type="text" placeholder="Catatan (Opsional)" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-sm">
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="tutupModal('transaksi')" class="flex-1 bg-slate-700 py-2 rounded-lg text-sm font-medium">Batal</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 py-2 rounded-lg text-sm font-bold">Simpan Transaksi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Konfigurasi Inisialisasi Supabase menggunakan akun kamu
-        const SUPABASE_URL = "https://slqncygxvtfzatbokvxp.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable__j8vBVPHiUkFCbGWZvOKyw_ibJP3DWt";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // MASUKKAN URL & KEY SUPABASE KAMU DI SINI
+        const SUPABASE_URL = "YOUR_SUPABASE_URL";
+        const SUPABASE_KEY = "YOUR_SUPABASE_KEY";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const form = document.getElementById('form-transaksi');
-        document.getElementById('tx-tanggal').valueAsDate = new Date();
+        function bukaModal(jenis) { document.getElementById(`modal-${jenis}`).classList.remove('hidden'); }
+        function tutupModal(jenis) { document.getElementById(`modal-${jenis}`).classList.add('hidden'); }
 
-        // 1. FUNGSI UTAMA: AMBIL DATA DARI SUPABASE
-        async function muatDataTransaksi() {
-            const { data: transactions, error } = await supabase
-                .from('transactions')
-                .select('*')
-                .order('tanggal', { ascending: false });
-
-            if (error) {
-                console.error("Gagal memuat data cloud:", error.message);
-                return;
-            }
-
-            updateTampilanSistem(transactions);
+        function formatMataUang(nilai, iso) {
+            if (iso === 'USD') return '$ ' + parseFloat(nilai).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            if (iso === 'IDR') return 'Rp ' + parseInt(nilai).toLocaleString('id-ID');
+            if (iso === 'KHR') return parseInt(nilai).toLocaleString('id-ID') + ' ៛';
+            return nilai;
         }
 
-        // 2. FUNGSI: MEMPERBARUI TAMPILAN SALDO DAN TABEL DI HALAMAN
-        function updateTampilanSistem(dataTransaksi) {
-            let saldoBCA = 0;
-            let saldoABA = 0;
-            const tbody = document.getElementById('tabel-body');
-            tbody.innerHTML = '';
+        async function sinkronisasiData() {
+            const { data: listRekening } = await _supabase.from('rekening').select('*');
+            const { data: listTransaksi } = await _supabase.from('transaksi').select('*, rekening(nama_rekening, mata_uang)').order('id', { ascending: false });
 
-            dataTransaksi.forEach((tx) => {
-                const nominalNum = parseFloat(tx.nominal);
-                
-                if (tx.rekening === 'BCA') {
-                    if (tx.jenis === 'Pendapatan') saldoBCA += nominalNum;
-                    else saldoBCA -= nominalNum;
-                } else if (tx.rekening === 'ABA') {
-                    if (tx.jenis === 'Pendapatan') saldoABA += nominalNum;
-                    else saldoABA -= nominalNum;
-                }
+            let saldoAkun = {};
+            let totalMataUang = { IDR: 0, USD: 0, KHR: 0 };
 
-                let displayNominal = tx.rekening === 'BCA' 
-                    ? 'Rp ' + nominalNum.toLocaleString('id-ID') 
-                    : '$ ' + nominalNum.toFixed(2);
+            if(listRekening) {
+                listRekening.forEach(rek => { saldoAkun[rek.id] = { ...rek, saldo_sekarang: parseFloat(rek.saldo_awal) }; });
+            }
 
-                const warnaJenis = tx.jenis === 'Pendapatan' ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10';
-                
-                const row = `
-                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/20">
-                        <td class="py-3.5">${tx.tanggal}</td>
-                        <td class="py-3.5"><span class="px-2 py-1 rounded text-xs font-medium ${warnaJenis}">${tx.jenis}</span></td>
-                        <td class="py-3.5 text-slate-300">${tx.rekening === 'BCA' ? 'BCA (IDR)' : 'ABA BANK'}</td>
-                        <td class="py-3.5 text-slate-300">${tx.kategori}</td>
-                        <td class="py-3.5 font-semibold ${tx.jenis === 'Pendapatan' ? 'text-emerald-400' : 'text-rose-400'}">${tx.jenis === 'Pendapatan' ? '+' : '-'}${displayNominal}</td>
-                        <td class="py-3.5 text-center">
-                            <button onclick="hapusTransaksiCloud(${tx.id})" class="text-rose-500 hover:text-rose-400 text-xs font-semibold bg-rose-500/10 px-2.5 py-1 rounded-lg transition">Hapus</button>
-                        </td>
-                    </tr>
+            if(listTransaksi) {
+                listTransaksi.forEach(trx => {
+                    if (saldoAkun[trx.rekening_id]) {
+                        if (trx.jenis === 'pemasukan') saldoAkun[trx.rekening_id].saldo_sekarang += parseFloat(trx.nominal);
+                        else saldoAkun[trx.rekening_id].saldo_sekarang -= parseFloat(trx.nominal);
+                    }
+                });
+            }
+
+            Object.values(saldoAkun).forEach(rek => { totalMataUang[rek.mata_uang] += rek.saldo_sekarang; });
+
+            document.getElementById('total-usd').innerText = formatMataUang(totalMataUang.USD, 'USD');
+            document.getElementById('total-idr').innerText = formatMataUang(totalMataUang.IDR, 'IDR');
+            document.getElementById('total-khr').innerText = formatMataUang(totalMataUang.KHR, 'KHR');
+
+            const wadahRekening = document.getElementById('daftar-rekening');
+            const pilihRekeningTrx = document.getElementById('trx-rekening');
+            wadahRekening.innerHTML = '';
+            pilihRekeningTrx.innerHTML = '<option value="">-- Pilih Rekening --</option>';
+
+            Object.values(saldoAkun).forEach(rek => {
+                wadahRekening.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-800/40 p-3 rounded-xl border border-slate-800">
+                        <div>
+                            <span class="text-xs font-bold text-slate-300 block">${rek.nama_rekening}</span>
+                            <span class="text-[10px] text-slate-500 bg-slate-900 px-1.5 py-0.5 rounded uppercase">${rek.jenis} - ${rek.mata_uang}</span>
+                        </div>
+                        <span class="text-sm font-bold text-slate-200">${formatMataUang(rek.saldo_sekarang, rek.mata_uang)}</span>
+                    </div>
                 `;
-                tbody.innerHTML += row;
+                pilihRekeningTrx.innerHTML += `<option value="${rek.id}">${rek.nama_rekening} (${rek.mata_uang})</option>`;
             });
 
-            document.getElementById('saldo-bca').innerText = 'Rp ' + saldoBCA.toLocaleString('id-ID');
-            document.getElementById('saldo-aba').innerText = '$ ' + saldoABA.toFixed(2);
+            const tBody = document.getElementById('tabel-transaksi');
+            tBody.innerHTML = '';
+            if(!listTransaksi || listTransaksi.length === 0) {
+                tBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-600 italic">Belum ada transaksi.</td></tr>`;
+            } else {
+                listTransaksi.forEach(trx => {
+                    const isCuan = trx.jenis === 'pemasukan';
+                    const mataUang = trx.rekening ? trx.rekening.mata_uang : 'IDR';
+                    tBody.innerHTML += `
+                        <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 text-xs">
+                            <td class="py-3 text-slate-400">${trx.tanggal}</td>
+                            <td class="py-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${isCuan ? 'bg-emerald-500/10 text-emerald-400':'bg-rose-500/10 text-rose-400'}">${trx.jenis}</span></td>
+                            <td class="py-3 text-slate-300">${trx.rekening ? trx.rekening.nama_rekening : 'N/A'}</td>
+                            <td class="py-3 text-slate-400">${trx.kategori}</td>
+                            <td class="py-3 text-right font-bold ${isCuan?'text-emerald-500':'text-rose-500'}">${isCuan?'+':'-'}${formatMataUang(trx.nominal, mataUang)}</td>
+                        </tr>
+                    `;
+                });
+            }
         }
 
-        // 3. EVENT: MENANGANI INPUT TRANSAKSI BARU KE SUPABASE
-        form.addEventListener('submit', async function(e) {
+        document.getElementById('form-rekening').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const dataBaru = {
-                tanggal: document.getElementById('tx-tanggal').value,
-                jenis: document.getElementById('tx-jenis').value,
-                rekening: document.getElementById('tx-rekening').value,
-                kategori: document.getElementById('tx-kategori').value,
-                nominal: parseFloat(document.getElementById('tx-nominal').value),
-                keterangan: document.getElementById('tx-keterangan').value
-            };
-
-            const { error } = await supabase
-                .from('transactions')
-                .insert([dataBaru]);
-
-            if (error) {
-                alert("Gagal menyimpan data ke cloud database: " + error.message);
-            } else {
-                document.getElementById('tx-nominal').value = '';
-                document.getElementById('tx-keterangan').value = '';
-                muatDataTransaksi(); // Refresh data setelah berhasil simpan
-            }
+            await _supabase.from('rekening').insert([{
+                nama_rekening: document.getElementById('rek-nama').value,
+                jenis: document.getElementById('rek-jenis').value,
+                mata_uang: document.getElementById('rek-mata-uang').value,
+                saldo_awal: document.getElementById('rek-saldo').value
+            }]);
+            tutupModal('rekening'); document.getElementById('form-rekening').reset(); sinkronisasiData();
         });
 
-        // 4. FUNGSI: MENGHAPUS DATA TRANSAKSI DARI SUPABASE CLOUD
-        async function hapusTransaksiCloud(id) {
-            if (confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) {
-                const { error } = await supabase
-                    .from('transactions')
-                    .delete()
-                    .eq('id', id);
+        document.getElementById('form-transaksi').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await _supabase.from('transaksi').insert([{
+                jenis: document.getElementById('trx-jenis').value,
+                rekening_id: document.getElementById('trx-rekening').value,
+                kategori: document.getElementById('trx-kategori').value,
+                nominal: document.getElementById('trx-nominal').value,
+                catatan: document.getElementById('trx-catatan').value
+            }]);
+            tutupModal('transaksi'); document.getElementById('form-transaksi').reset(); sinkronisasiData();
+        });
 
-                if (error) {
-                    alert("Gagal menghapus data: " + error.message);
-                } else {
-                    muatDataTransaksi(); // Refresh data setelah berhasil dihapus
-                }
-            }
-        }
-
-        // Jalankan pengambilan data cloud saat halaman pertama kali dibuka
-        muatDataTransaksi();
+        window.onload = sinkronisasiData;
     </script>
 </body>
 </html>
